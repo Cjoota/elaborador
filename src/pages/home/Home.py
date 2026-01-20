@@ -10,9 +10,18 @@ class Home:
         self.buildRegisterMenu()
         
     def buildWidgetsToView(self):
-        self.companies_registred = ft.Dropdown(expand=True,width=350,label="Empresa",menu_width=350)
-        self.companies_list = ft.Dropdown(expand=True,width=350,border_radius=10,label="Empresa")
+        self.companies_registred = ft.Dropdown(expand=True,width=350,label="Empresa",menu_width=350,enable_filter=True,enable_search=True,editable=True)
+        self.companies_list = ft.Dropdown(expand=True,width=350,border_radius=10,label="Empresa",enable_filter=True,enable_search=True,editable=True)
         self.colaborator_name = ft.TextField(label="Nome do Colaborador",width=300, border_radius=10)
+        self.colaborator_cpf = ft.TextField(
+            label="CPF do Colaborador",
+            width=300, 
+            border_radius=10,
+            max_length=14,
+            on_change=self.functions.limpar_input_cpf,      
+            keyboard_type=ft.KeyboardType.NUMBER 
+        )
+        
         self.start_button = ft.FloatingActionButton("Criar PDF",icon=ft.Icons.CREATE, 
                                                     bgcolor=ft.Colors.GREEN_ACCENT_200,
                                                     on_click=lambda: self.openCreateMenu() )
@@ -35,7 +44,7 @@ class Home:
                 ),
                 ft.Row(
                     [
-                        self.colaborator_name,self.start_button
+                        self.colaborator_name,self.colaborator_cpf,self.start_button
                     ],alignment=ft.MainAxisAlignment.CENTER,vertical_alignment=ft.CrossAxisAlignment.CENTER
                 )
             ],alignment=ft.MainAxisAlignment.CENTER
@@ -145,8 +154,10 @@ class Home:
 
     def createPdf(self):
         sleep(1.5)
+        msg = ""
+        
         try:
-            msg = self.functions.createPDF(self.companies_registred.value,self.ListForPDF,self.colaborator_name.value)
+            msg = self.functions.createPDF(self.companies_registred.value,self.ListForPDF,self.colaborator_name.value,self.colaborator_cpf.value)
         except Exception as e:
             self.functions.snack_bar(f"Não foi possivel lacrar o pdf, ERRO: {str(e)} and {msg}",ft.Colors.GREEN)
             print(e)

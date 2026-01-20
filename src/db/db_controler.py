@@ -15,7 +15,7 @@ class Database:
         load_dotenv()
         _database_sinc = (
             f"postgresql+psycopg2://postgres:"
-            f"cl1234@192.168.3.59:"
+            f"cl1234@192.168.3.129:"
             f"5432/postgres"
         )
         self.__engine = create_engine(

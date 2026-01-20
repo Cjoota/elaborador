@@ -58,7 +58,23 @@ class Functions:
             return False
         archive_digitalize = Path(archive_name)
         return archive_digitalize
+    
+    def limpar_input_cpf(self, e):
+        valor_atual = e.control.value
         
-    def createPDF(self,enterprise:str, examsList_path:list, colaborator:str):
-        Msg = Locker().create_exam(enterprise,colaborator,examsList_path,Passwords().get_companiesKey(enterprise))
+        novo_valor = ''.join(c for c in valor_atual if c.isdigit() or c in ".-")
+        
+        if valor_atual != novo_valor:
+            e.control.value = novo_valor
+            e.control.update()
+                
+    def createPDF(self, enterprise: str, examsList_path: list, colaborator: str, cpf: str = ""):
+        Msg = Locker().create_exam(
+            enterprise=enterprise, 
+            colaborator=colaborator, 
+            exams=examsList_path, 
+            passw=Passwords().get_companiesKey(enterprise),
+            cpf=cpf
+        )
         return Msg
+    
