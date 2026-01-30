@@ -1,4 +1,5 @@
 import flet as ft
+import traceback
 from time import sleep
 from src.pages.home.functions import Functions
 
@@ -10,14 +11,13 @@ class Home:
         self.buildRegisterMenu()
         
     def buildWidgetsToView(self):
-        self.companies_registred = ft.Dropdown(expand=True,width=350,label="Empresa",menu_width=350,enable_filter=True,enable_search=True,editable=True)
-        self.companies_list = ft.Dropdown(expand=True,width=350,border_radius=10,label="Empresa",enable_filter=True,enable_search=True,editable=True)
+        self.companies_registred = ft.Dropdown(width=350,label="Empresa",menu_width=350,enable_filter=True,enable_search=True,editable=True)
+        self.companies_list = ft.Dropdown(width=350,border_radius=10,label="Empresa",enable_filter=True,enable_search=True,editable=True)
         self.colaborator_name = ft.TextField(label="Nome do Colaborador",width=300, border_radius=10)
         self.colaborator_cpf = ft.TextField(
             label="CPF do Colaborador",
-            width=300, 
+            width=350, 
             border_radius=10,
-            max_length=14,
             on_change=self.functions.limpar_input_cpf,      
             keyboard_type=ft.KeyboardType.NUMBER 
         )
@@ -39,7 +39,6 @@ class Home:
                 ft.Row(
                     [
                         self.companies_registred,self.registerKey_button
-                        
                     ],alignment=ft.MainAxisAlignment.CENTER,vertical_alignment=ft.CrossAxisAlignment.CENTER
                 ),
                 ft.Row(
@@ -47,7 +46,10 @@ class Home:
                         self.colaborator_name,self.colaborator_cpf,self.start_button
                     ],alignment=ft.MainAxisAlignment.CENTER,vertical_alignment=ft.CrossAxisAlignment.CENTER
                 )
-            ],alignment=ft.MainAxisAlignment.CENTER
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER 
         )
 
     def buildRegisterMenu(self):
@@ -77,8 +79,18 @@ class Home:
             actions=[ft.Button("Registrar",on_click=lambda: self.register()),ft.Button("Sair",on_click=lambda: self.page.pop_dialog() ),])
         
     def openRegisterMenu(self):
-        self.buildRegisterMenu()
-        Functions(self.page).open_menu(self.registerKey_Menu)
+        try:
+            self.buildRegisterMenu()
+            Functions(self.page).open_menu(self.registerKey_Menu)
+        except Exception as e:
+            error_msg = f"ERRO: {str(e)}\n\nDETALHES:\n{traceback.format_exc()}"
+            
+            self.page.snack_bar = ft.SnackBar(ft.Text(f"ERRO: {e}"), bgcolor=ft.Colors.RED)
+            self.page.snack_bar.open = True
+            self.page.update()
+            
+            with open("ERRO_DO_SISTEMA.txt", "w", encoding="utf-8") as f:
+                f.write(error_msg)
 
     def buildCreatePdf(self):
         self.exams_list = []
@@ -141,6 +153,7 @@ class Home:
             self.page.pop_dialog()
             self.functions.snack_bar("Preencha todos os campos!",ft.Colors.RED)
         except Exception as e:
+            self.functions.snack_bar(f"ERRO: {str(e)}", ft.Colors.RED)
             print(e)
 
     def digitalize(self):

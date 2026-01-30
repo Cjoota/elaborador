@@ -12,3 +12,6 @@ wheels/
 src/db/encrypt/companies.json
 main.spec
 teste.py
+*.pdf
+*.jpg
+*.spec

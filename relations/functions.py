@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 from openpyxl import load_workbook
 
@@ -11,6 +12,17 @@ class ExcelProtocol:
         self.exportados_path = "exportados_ms"
         os.makedirs(self.exportados_path, exist_ok=True)
 
+    def get_app_path(filename):
+        """Retorna o caminho onde o .exe está rodando (e não a pasta temp)"""
+        if getattr(sys, 'frozen', False):
+            # Se estiver rodando como .exe
+            application_path = os.path.dirname(sys.executable)
+        else:
+            # Se estiver rodando como script normal
+            application_path = os.path.dirname(os.path.abspath(__file__))
+        
+        return os.path.join(application_path, filename)
+    
     def registrar_colaborador(self, colaborator: str, cpf: str):
         """
         Lógica de Paginação (Limite D27):

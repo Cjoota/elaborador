@@ -1,5 +1,6 @@
 import flet as ft
 
+
 from src.db.db_controler import Database
 from src.db.paswords import Passwords
 from src.core.elaborador import Interfaces
@@ -15,10 +16,10 @@ class Main:
         self.encrypt = Passwords()
         self.Interfaces = Interfaces(self.page)
         self.Interfaces.build_interface()
-
+        
 @atexit.register
 def Limpar():
 	for d in Path(".").rglob("__pycache__"):
 		shutil.rmtree(d)
 
-ft.run(main=Main)
+ft.app(target=Main)
